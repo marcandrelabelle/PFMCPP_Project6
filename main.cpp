@@ -28,27 +28,22 @@ struct T
 
 struct CompareStruct                            //4 √
 {
-    T* compare(T* a, T* b) //5 √
+    T* compare(T& a, T& b) //5 √
     {
-        if(a != nullptr && b != nullptr)
-        {
-            if( a->value < b->value ) return a;
-            if( a->value > b->value ) return b;
-        }
+    
+        if( a.value < b.value ) return &a;
+        if( a.value > b.value ) return &b;
         return nullptr;
     }
-    
 };
 
 struct U
 {
     float u1 { 0.f }, u2 { 0.f };
-    float aMathFunction(float* newVal)      //12
+    float aMathFunction(const float& newVal)      //12
     {
-        if(newVal != nullptr)
-        {
             std::cout << "U's u1 value: " << this->u1 << std::endl;
-            this->u1 = *newVal;  
+            this->u1 = newVal;  
             std::cout << "U's u1 updated value: " << this->u1 << std::endl;
 
             while( std::abs(this->u1 - this->u2) > 0.001f )
@@ -58,34 +53,32 @@ struct U
             }
             std::cout << "U's u2 updated value: " << this->u2 << std::endl;
             return this->u2 * this->u1;   
-        }
-        return 0;
     }
 };
 
 struct X
 {
-    static float aStaticFunction (U* that, float* newVal )        //10 √
+    static float aStaticFunction (U& that, float& newVal )        //10 √
     {
-        if(that != nullptr && newVal != nullptr)
+       
+        
+        std::cout << "U's u1 value: " << that.u1 << std::endl;
+        that.u1 = newVal;
+        std::cout << "U's u1 updated value: " << that.u1 << std::endl;
+
+        while( std::abs(that.u1 - that.u2) > 0.001f )
         {
-            std::cout << "U's u1 value: " << that->u1 << std::endl;
-            that->u1 = *newVal;
-            std::cout << "U's u1 updated value: " << that->u1 << std::endl;
-
-            while( std::abs(that->u1 - that->u2) > 0.001f )
-            {
-                /*
-                write something that makes the distance between that-><#name2#> and that-><#name1#> get smaller
-                */
-                //std::cout<< that->u2;
-                that->u2 += 0.1f;
-            }
-
-            std::cout << "U's u2 updated value: " << that->u2 << std::endl;
-            return that->u2 * that->u1;
+            /*
+            write something that makes the distance between that-><#name2#> and that-><#name1#> get smaller
+            */
+            //std::cout<< that->u2;
+            that.u2 += 0.1f;
         }
-        return 0;
+
+        std::cout << "U's u2 updated value: " << that.u2 << std::endl;
+        return that.u2 * that.u1;
+        
+
     }
 };
         
@@ -109,17 +102,17 @@ int main()
     T t2(2.0f ,"b");                                             //6 √
     
     CompareStruct f;                                            //7 √
-    auto* smaller = f.compare( &t1 , &t2  );                              //8 √
+    auto* smaller = f.compare( t1 , t2  );                              //8 √
 
     if(smaller != nullptr)
         std::cout << "the smaller one is << " << smaller->name << std::endl; //9 √
     
     U uu1;
     float updatedValue = 5.f;
-    std::cout << "[static func] uu1's multiplied values: " << X::aStaticFunction(&uu1 , &updatedValue ) << std::endl;                  //11 √
+    std::cout << "[static func] uu1's multiplied values: " << X::aStaticFunction(uu1 , updatedValue ) << std::endl;                  //11 √
     
     U uu2;
-    std::cout << "[member func] uu2's multiplied values: " << uu2.aMathFunction( &updatedValue ) << std::endl;
+    std::cout << "[member func] uu2's multiplied values: " << uu2.aMathFunction( updatedValue ) << std::endl;
 }
 
         
